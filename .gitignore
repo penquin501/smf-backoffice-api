@@ -1,0 +1,26 @@
+# Laravel
+/vendor
+/node_modules
+/storage/*.key
+/.env
+/public/storage
+/storage/logs
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+
+# Next.js
+# frontend/.next
+# frontend/node_modules
+# frontend/.env.local
+
+# Docker
+docker/mysql_data/
+*.log
+
+# Others
+.idea
+.vscode
+.DS_Store
+.env
+.env.*
