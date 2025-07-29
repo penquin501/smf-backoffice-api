@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\BolBsRaw;
+use App\Models\BolIcRaw;
+use App\Models\GecInvoice;
+use App\Models\GecPurchaseOrder;
+
+use Illuminate\Validation\ValidationException;
 
 class PublicApiController extends Controller
 {
@@ -76,7 +81,7 @@ class PublicApiController extends Controller
             }
             $data[] = $mappedItem;
         }
-        // dd($data);
+
         $checked = [];
         foreach ($data as $kk => $item) {
             $validated = validator($item, [
@@ -157,5 +162,197 @@ class PublicApiController extends Controller
             'data' => $output,
             'message' => 'All data saved successfully.',
         ]);
+    }
+
+    public function bol_ic_store(Request $request)
+    {
+        // Mapping: Request key -> Database field
+        $fieldMap = [
+            'company_id' => 'company_id',
+            'company_name' => 'company_name',
+            'year' => 'year',
+            'Net Sales' => 'net_sales',
+            'Total other income' => 'total_other_income',
+            'Total revenue' => 'total_revenue',
+            'Cost of sales /services' => 'cost_of_sales_services',
+            'Gross profit (loss)' => 'gross_profit_loss',
+            'Total operating expenses' => 'total_operating_expenses',
+            'Operating income (loss)' => 'operating_income_loss',
+            'Other expenses' => 'other_expenses',
+            'Income (loss) before depreciation and amortization' => 'income_loss_before_depreciation_and_amoritization',
+            'Income (loss) before interest and income taxes' => 'income_loss_before_interest_and_income_taxes',
+            'Interest expenses' => 'interest_expenses',
+            'Income taxes' => 'income_taxes',
+            'Extraordinary items' => 'extraordinary_items',
+            'Others' => 'others',
+            'Net income (loss)' => 'net_income_loss',
+            'Earnings (loss) per share' => 'earnings_loss_per_share',
+            'Number of Weighted Average Ordinary Shares' => 'number_of_weighted_average_ordinary_shares'
+        ];
+
+        $data = [];
+        foreach ($request->all() as $key => $value) {
+            $mappedItem = [];
+            foreach ($value as $k => $v) {
+                if (isset($fieldMap[$k])) {
+                    $mappedItem[$fieldMap[$k]] = $v;
+                }
+            }
+            $data[] = $mappedItem;
+        }
+
+        $checked = [];
+        foreach ($data as $kk => $item) {
+            $validated = validator($item, [
+                'company_id' => 'required|string',
+                'company_name' => 'nullable|string',
+                'year' => 'required|integer',
+                'net_sales' => 'nullable|numeric',
+                'total_other_income' => 'nullable|numeric',
+                'total_revenue' => 'nullable|numeric',
+                'cost_of_sales_services' => 'nullable|numeric',
+                'gross_profit_loss' => 'nullable|numeric',
+                'total_operating_expenses' => 'nullable|numeric',
+                'operating_income_loss' => 'nullable|numeric',
+                'other_expenses' => 'nullable|numeric',
+                'income_loss_before_depreciation_and_amoritization' => 'nullable|numeric',
+                'income_loss_before_interest_and_income_taxes' => 'nullable|numeric',
+                'interest_expenses' => 'nullable|numeric',
+                'income_taxes' => 'nullable|numeric',
+                'extraordinary_items' => 'nullable|numeric',
+                'others' => 'nullable|numeric',
+                'net_income_loss' => 'nullable|numeric',
+                'earnings_loss_per_share' => 'nullable|numeric',
+                'number_of_weighted_average_ordinary_shares' => 'nullable|numeric',
+            ])->validate();
+
+            $checked[] = $validated;
+        }
+
+        $output = [];
+
+        foreach ($checked as $item) {
+            $bolIc = BolIcRaw::updateOrCreate(
+                [
+                    'company_id' => $item['company_id'],
+                    'year' => $item['year']
+                ],
+                $item
+            );
+
+            $output[] = $bolIc;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $output,
+            'message' => 'All data saved successfully.',
+        ]);
+    }
+
+    public function gec_po_store(Request $request)
+    {
+        try {
+
+            $checked = [];
+            foreach ($request->all() as $item) {
+                $validated = validator($item, [
+                    'po_no' => 'nullable|string',
+                    'po_date' => 'nullable|date',
+                    'supplier_name' => 'nullable|string',
+                    'buyer_name' => 'nullable|string',
+                    'delivery_date' => 'nullable|date',
+                    'payment_term' => 'nullable|string',
+                    'amount_excl_vat' => 'nullable|numeric',
+                    'vat_amount' => 'nullable|numeric',
+                    'amount_incl_vat' => 'nullable|numeric'
+                ])->validate();
+                $checked[] = $validated;
+            }
+            $output = [];
+
+            foreach ($checked as $item) {
+                $gecPo = GecPurchaseOrder::create(
+                    // [
+                    //     'po_no' => $item['po_no']
+                    // ],
+                    $item
+                );
+
+                $output[] = $gecPo;
+            }
+
+            return response()->json([
+                'success' => true,
+                'count_req' => count($request->all()),
+                'count_output' => count($output),
+                'data' => $output,
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation failed',
+                'messages' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function gec_invoice_store(Request $request)
+    {
+        try {
+            $checked = [];
+
+            foreach ($request->all() as $item) {
+                $validated = validator($item, [
+                    'invoice_no' => 'nullable|string',
+                    'po_no' => 'nullable|string',
+                    'invoice_date' => 'nullable|date',
+                    'supplier_name' => 'nullable|string',
+                    'buyer_name' => 'nullable|string',
+                    'amount_excl_vat' => 'nullable|numeric',
+                    'vat_amount' => 'nullable|numeric',
+                    'amount_incl_vat' => 'nullable|numeric'
+                ])->validate();
+
+                $checked[] = $validated;
+            }
+
+            $output = [];
+
+            foreach ($checked as $item) {
+                $gecInv = GecInvoice::create(
+                    // [
+                    //     'invoice_no' => $item['invoice_no'],
+                    //     'po_no' => $item['po_no']
+                    // ],
+                    $item
+                );
+
+                $output[] = $gecInv;
+            }
+
+            return response()->json([
+                'success' => true,
+                'count_req' => count($request->all()),
+                'count_output' => count($output),
+                'data' => $output,
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation failed',
+                'messages' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

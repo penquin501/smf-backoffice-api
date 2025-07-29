@@ -16,6 +16,10 @@ Route::get('/ping', function () {
 
 Route::prefix('/public')->group(function () {
     Route::post('/bol-bs', [PublicApiController::class, 'bol_bs_store']);
+    Route::post('/bol-ic', [PublicApiController::class, 'bol_ic_store']);
+
+    Route::post('/gec-inv', [PublicApiController::class, 'gec_invoice_store']);
+    Route::post('/gec-po', [PublicApiController::class, 'gec_po_store']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
