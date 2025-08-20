@@ -7,6 +7,7 @@ use App\Models\BolBsRaw;
 use App\Models\BolIcRaw;
 use App\Models\GecInvoice;
 use App\Models\GecPurchaseOrder;
+use App\Models\DbdSupplier;
 
 use Illuminate\Validation\ValidationException;
 
@@ -334,6 +335,108 @@ class PublicApiController extends Controller
                 );
 
                 $output[] = $gecInv;
+            }
+
+            return response()->json([
+                'success' => true,
+                'count_req' => count($request->all()),
+                'count_output' => count($output),
+                'data' => $output,
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation failed',
+                'messages' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function dbd_supplier_store(Request $request)
+    {
+        try {
+            $checked = [];
+
+            foreach ($request->all() as $item) {
+
+                if (isset($item['No'])) {
+                    $item['gec_no'] = $item['No'];
+                    unset($item['No']);
+                }
+
+                if (isset($item['group'])) {
+                    $item['group_id'] = $item['group'];
+                    unset($item['group']);
+                }
+
+                $validated = validator($item, [
+                    'gec_no' => 'nullable|integer',
+                    'registration_id' => 'required|string|max:20',
+                    'supplier_id' => 'required|integer',
+                    'is_supplier' => 'required|integer',
+                    'start_effective_date' => 'nullable|date',
+                    'size' => 'nullable|string|max:10',
+                    'supplier_name' => 'required|string|max:255',
+                    'registration_date' => 'nullable|date',
+                    'registered_capital' => 'nullable|numeric',
+                    'trade_receivables_net' => 'nullable|numeric',
+                    'inventory' => 'nullable|numeric',
+                    'current_assets' => 'nullable|numeric',
+                    'property_plant_equipment' => 'nullable|numeric',
+                    'non_current_assets' => 'nullable|numeric',
+                    'total_assets' => 'nullable|numeric',
+                    'current_liabilities' => 'nullable|numeric',
+                    'non_current_liabilities' => 'nullable|numeric',
+                    'total_liabilities' => 'nullable|numeric',
+                    'shareholders_equity' => 'nullable|numeric',
+                    'liabilities_and_equity' => 'nullable|numeric',
+                    'group_id' => 'nullable|numeric',
+                    'main_revenue' => 'nullable|numeric',
+                    'total_revenue_fs' => 'nullable|numeric',
+                    'cost_of_goods_sold' => 'nullable|numeric',
+                    'gross_profit' => 'nullable|numeric',
+                    'selling_and_admin_expenses' => 'nullable|numeric',
+                    'total_expenses' => 'nullable|numeric',
+                    'interest_expense' => 'nullable|numeric',
+                    'profit_before_tax' => 'nullable|numeric',
+                    'income_tax' => 'nullable|numeric',
+                    'net_profit' => 'nullable|numeric',
+                    'no_of_buyer' => 'nullable|integer',
+                    'roa_percent' => 'nullable|numeric',
+                    'roe_percent' => 'nullable|numeric',
+                    'gross_profit_margin_percent' => 'nullable|numeric',
+                    'operating_margin_percent' => 'nullable|numeric',
+                    'net_margin_percent' => 'nullable|numeric',
+                    'asset_turnover_ratio' => 'nullable|numeric',
+                    'receivables_turnover_ratio' => 'nullable|numeric',
+                    'inventory_turnover_ratio' => 'nullable|numeric',
+                    'operating_expense_ratio' => 'nullable|numeric',
+                    'current_ratio' => 'nullable|numeric',
+                    'debt_to_asset_ratio' => 'nullable|numeric',
+                    'asset_to_equity_ratio' => 'nullable|numeric',
+                    'debt_to_equity_ratio' => 'nullable|numeric'
+                ])->validate();
+
+                $checked[] = $validated;
+            }
+
+            $output = [];
+
+            foreach ($checked as $item) {
+                $dbdSupplier = DbdSupplier::create(
+                    // [
+                    //     'invoice_no' => $item['invoice_no'],
+                    //     'po_no' => $item['po_no']
+                    // ],
+                    $item
+                );
+
+                $output[] = $dbdSupplier;
             }
 
             return response()->json([

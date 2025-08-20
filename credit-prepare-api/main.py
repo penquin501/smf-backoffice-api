@@ -3,6 +3,7 @@ from services.bs_processor import process_bs_statements
 from services.ic_processor import process_ic_statements
 from services.po_processor import load_po_data, save_po_json
 from services.inv_processor import load_invoice_data, save_inv_json
+from services.supplier_processor import load_supplier_data, save_supplier_json
 # from services.scraper import scrape_company_by_id
 import requests
 import os
@@ -71,25 +72,34 @@ def process_ic():
     return result
 
 
+from datetime import datetime, timedelta
+
+def excel_serial_to_thai_date(serial: int) -> str:
+    base_date = datetime(1899, 12, 30)  # Excel เริ่มจากวันที่นี้
+    date = base_date + timedelta(days=serial)
+    day = date.day
+    return f"{day:02d}/{date.month}/{(date.year)-543}"
+
 
 
 def main():
-    po_filename = "Transaction Data Potential customer list - 7.xlsx"
-    inv_filename = "Inv Transaction Data Potential customer list - 7.xlsx"
+    # po_filename = "Transaction Data Potential customer list - 7.xlsx"
+    # inv_filename = "Inv Transaction Data Potential customer list - 7.xlsx"
 
-    po_data = load_po_data(po_filename)
-    po_output_json = "po_data.json"
-    save_po_json(po_data, po_output_json)
+    # po_data = load_po_data(po_filename)
+    # po_output_json = "po_data.json"
+    # save_po_json(po_data, po_output_json)
 
-    inv_data = load_invoice_data(inv_filename)
-    inv_output_json = "inv_data.json"
-    save_inv_json(inv_data, inv_output_json)
+    # inv_data = load_invoice_data(inv_filename)
+    # inv_output_json = "inv_data.json"
+    # save_inv_json(inv_data, inv_output_json)
 
-    print("\n--- PO DATA ---")
-    print(po_data.head())
+    # print(excel_serial_to_thai_date(240514))
 
-    print("\n--- INVOICE DATA ---")
-    print(inv_data.head())
+    supplier_filename = "Supplier_Data_MappingDBD.xlsx"
+    supplier_data = load_supplier_data(supplier_filename)
+    supplier_output_json = "supplier_data.json"
+    save_supplier_json(supplier_data, supplier_output_json)
 
 if __name__ == "__main__":
     main()
