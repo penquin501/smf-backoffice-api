@@ -21,6 +21,8 @@ Route::prefix('/public')->group(function () {
     Route::post('/gec-inv', [PublicApiController::class, 'gec_invoice_store']);
     Route::post('/gec-po', [PublicApiController::class, 'gec_po_store']);
 
+    Route::post('/gec-old-inv', [PublicApiController::class, 'gec_old_invoice_store']);
+
     Route::post('/dbd-supplier', [PublicApiController::class, 'dbd_supplier_store']);
 });
 

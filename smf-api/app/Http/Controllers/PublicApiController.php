@@ -8,8 +8,10 @@ use App\Models\BolIcRaw;
 use App\Models\GecInvoice;
 use App\Models\GecPurchaseOrder;
 use App\Models\DbdSupplier;
+use App\Models\GecInvoice2023;
 
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class PublicApiController extends Controller
 {
@@ -341,6 +343,74 @@ class PublicApiController extends Controller
                 'success' => true,
                 'count_req' => count($request->all()),
                 'count_output' => count($output),
+                'data' => $output,
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation failed',
+                'messages' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function gec_old_invoice_store(Request $request)
+    {
+        try {
+            $checked = [];
+
+            foreach ($request->all() as $item) {
+                $validated = validator($item, [
+                    'invoice_no' => 'nullable|string',
+                    'invoice_date' => 'nullable|string',
+                    'po_no' => 'nullable|string',
+                    'po_date' => 'nullable|string',
+                    'supplier_code' => 'nullable|string',
+                    'buyer_code' => 'nullable|string',
+                    'amount_excl_vat' => 'nullable|numeric',
+                    'vat_amount' => 'nullable|numeric',
+                    'amount_incl_vat' => 'nullable|numeric'
+                ])->validate();
+
+                $checked[] = $validated;
+            }
+
+            $output = [];
+
+            $inserted = 0;
+            $chunkSize = 1000; // ปรับตามขนาดข้อมูล/สเปกเครื่อง
+            DB::beginTransaction();
+
+            foreach (array_chunk($checked, $chunkSize) as $chunk) {
+                // ถ้าไม่ต้องการ created_at/updated_at ให้เติมเองหรือปิด timestamps ใน model
+                $now = now();
+                foreach ($chunk as &$r) {
+                    $r['created_at'] = $now;
+                    $r['updated_at'] = $now;
+                }
+                // ใช้ตารางตรง ๆ จะไวกว่า create() ทีละแถว
+                DB::table('gec_2023_invoices')->insert($chunk);
+                $inserted += count($chunk);
+            }
+
+            DB::commit();
+            // foreach ($checked as $item) {
+            //     $gecInv = GecInvoice2023::create(
+            //         $item
+            //     );
+
+            //     $output[] = $gecInv;
+            // }
+
+            return response()->json([
+                'success' => true,
+                'count_req' => count($request->all()),
+                'count_output' => $inserted,
                 'data' => $output,
             ]);
         } catch (ValidationException $e) {

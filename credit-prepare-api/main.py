@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from services.bs_processor import process_bs_statements
 from services.ic_processor import process_ic_statements
-from services.po_processor import load_po_data, save_po_json
-from services.inv_processor import load_invoice_data, save_inv_json
+# from services.po_processor import load_po_data, save_po_json
+# from services.inv_processor import load_invoice_data, save_inv_json
 from services.supplier_processor import load_supplier_data, save_supplier_json
+
+from services.inv_old_processor import load_old_invoice_data, save_old_inv_json
+from services.po_old_processor import load_old_po_data, save_old_po_json
+
 # from services.scraper import scrape_company_by_id
 import requests
 import os
@@ -85,6 +89,7 @@ def excel_serial_to_thai_date(serial: int) -> str:
 def main():
     # po_filename = "Transaction Data Potential customer list - 7.xlsx"
     # inv_filename = "Inv Transaction Data Potential customer list - 7.xlsx"
+    # supplier_filename = "Supplier_Data_MappingDBD.xlsx"
 
     # po_data = load_po_data(po_filename)
     # po_output_json = "po_data.json"
@@ -94,12 +99,64 @@ def main():
     # inv_output_json = "inv_data.json"
     # save_inv_json(inv_data, inv_output_json)
 
-    # print(excel_serial_to_thai_date(240514))
+    # supplier_data = load_supplier_data(supplier_filename)
+    # supplier_output_json = "supplier_data.json"
+    # save_supplier_json(supplier_data, supplier_output_json)
 
-    supplier_filename = "Supplier_Data_MappingDBD.xlsx"
-    supplier_data = load_supplier_data(supplier_filename)
-    supplier_output_json = "supplier_data.json"
-    save_supplier_json(supplier_data, supplier_output_json)
+    # inv_filenames = [
+    #     {
+    #         "input_filename":"inv/2023.csv", 
+    #         "output_filename":"inv_2023.json"
+    #      },
+    #      {
+    #         "input_filename":"inv/2024.csv", 
+    #         "output_filename":"inv_2024.json"
+    #      },
+    #      {
+    #         "input_filename":"inv/2025.csv", 
+    #         "output_filename":"inv_2025.json"
+    #      },
+    # ]
+    
+    # for inv_filename in inv_filenames:
+    #     print(inv_filename["input_filename"])
+    #     inv_data = load_old_invoice_data(inv_filename["input_filename"])
+    #     print(len(inv_data))
+    #     print(inv_filename["output_filename"])
+    #     save_old_inv_json(inv_data, inv_filename["output_filename"])
+
+    po_filenames = [
+        # {
+        #     "input_filename":"po/2023.xlsx", 
+        #     "output_filename":"po_2023.json"
+        #  }, //done
+        #  {
+        #     "input_filename":"po/2024.xlsx", 
+        #     "output_filename":"po_2024.json"
+        #  },
+         {
+            "input_filename":"po/10-2024.csv", 
+            "output_filename":"po_10_2024.json"
+         },
+         {
+            "input_filename":"po/11-2024.csv", 
+            "output_filename":"po_11_2024.json"
+         },
+         {
+            "input_filename":"po/12-2024.csv", 
+            "output_filename":"po_12_2024.json"
+         },
+        #  {
+        #     "input_filename":"po/01-2025.csv", 
+        #     "output_filename":"po_2025.json"
+        #  },
+    ]
+
+    for po_filename in po_filenames:
+        po_data = load_old_po_data(po_filename["input_filename"])
+        print(len(po_data))
+        print(po_filename["output_filename"])
+        save_old_po_json(po_data, po_filename["output_filename"])
 
 if __name__ == "__main__":
     main()
