@@ -220,49 +220,6 @@ class ImportOldInvoices extends Command
     }
 
     // แปลงวันที่ให้เป็น YYYY-MM-DD; รองรับ dd-mm-YYYY เป็นพิเศษ
-    // protected function toYmdOrNull(?string $s): ?string
-    // {
-    //     if (!$s) return null;
-    //     $s = trim($s);
-    //     if ($s === '') return null;
-
-    //     if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $s)) return $s;
-
-    //     // $fmts = ['d-m-Y', 'd/m/Y', 'd.m.Y', 'Y/m/d', 'Y.m.d', 'm/d/Y', 'm-d-Y'];
-    //     $fmts = [
-    //         'd-m-Y',
-    //         'd/m/Y',
-    //         'd.m.Y', // ปี 4 หลัก
-    //         'Y/m/d',
-    //         'Y.m.d',
-    //         'm/d/Y',
-    //         'm-d-Y',
-    //         'd-m-y',
-    //         'd/m/y',
-    //         'd.m.y'  // ปี 2 หลัก (เช่น 25 → 2025)
-    //     ];
-
-    //     foreach ($fmts as $f) {
-    //         try {
-    //             $dt = Carbon::createFromFormat($f, $s);
-    //             // if ($dt !== false) return $dt->format('Y-m-d');
-    //             if ($dt !== false) {
-    //                 // ถ้าเป็น format ที่มีปี 2 หลัก
-    //                 if (str_contains($f, 'y') && $dt->year < 100) {
-    //                     $dt->year = 2000 + $dt->year; // บังคับเป็น ค.ศ. 20xx
-    //                 }
-    //                 return $dt->format('Y-m-d');
-    //             }
-    //         } catch (\Throwable $e) {
-    //         }
-    //     }
-    //     try {
-    //         return Carbon::parse($s)->format('Y-m-d');
-    //     } catch (\Throwable $e) {
-    //         return null;
-    //     }
-    // }
-
     protected function toYmdOrNull(?string $s): ?string
     {
         if (!$s) return null;
