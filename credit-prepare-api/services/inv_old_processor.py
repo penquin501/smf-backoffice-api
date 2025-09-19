@@ -37,6 +37,8 @@ def normalize_invoice_columns(df):
         "VAT Amount": "vat_amount",
         "Amount Incl. VAT": "amount_incl_vat",
 
+        "# Invoice No.": "invoice_no",
+
         # อื่น ๆ
         "Supplier Code": "supplier_code",
         "Buyer Code": "buyer_code",

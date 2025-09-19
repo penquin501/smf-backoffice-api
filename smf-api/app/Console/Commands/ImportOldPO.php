@@ -148,6 +148,9 @@ class ImportOldPo extends Command
             // $row['invoice_date'] = $this->toYmdOrNull($row['invoice_date'] ?? null);
             $row['po_date']      = $this->toYmdOrNull($row['po_date'] ?? null);
             $row['po_shipment_date']      = $this->toYmdOrNull($row['po_shipment_date'] ?? null);
+            $row['amount_excl_vat'] = $row['amount_excl_vat'] == 0
+                ? $row['amount_incl_vat'] - $row['vat_amount']
+                : $row['amount_excl_vat'];
 
             // ตัวเลข
             foreach (['amount_excl_vat', 'vat_amount', 'amount_incl_vat'] as $nc) {

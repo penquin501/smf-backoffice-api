@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicApiController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -29,5 +30,8 @@ Route::prefix('/public')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
+    });
+    Route::prefix('/supplier')->group(function () {
+        Route::get('/{id}', [SupplierController::class, 'get_supplier_info']);
     });
 });

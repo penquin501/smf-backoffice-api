@@ -14,7 +14,7 @@ class ImportOldInvoices extends Command
 {
     protected $signature = 'invoices:import
         {path : Path to JSON file (root = array of objects)}
-        {--table=gec_inv_2023 : DB table name}
+        {--table=gec_inv_2025 : DB table name}
         {--connection= : DB connection name (override default)}
         {--pointer= : JSON pointer when root is an object, e.g. /items}
         {--match= : Comma-separated keys for per-row upsert (e.g. invoice_no,buyer_code)}
@@ -220,24 +220,99 @@ class ImportOldInvoices extends Command
     }
 
     // แปลงวันที่ให้เป็น YYYY-MM-DD; รองรับ dd-mm-YYYY เป็นพิเศษ
+    // protected function toYmdOrNull(?string $s): ?string
+    // {
+    //     if (!$s) return null;
+    //     $s = trim($s);
+    //     if ($s === '') return null;
+
+    //     if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $s)) return $s;
+
+    //     // $fmts = ['d-m-Y', 'd/m/Y', 'd.m.Y', 'Y/m/d', 'Y.m.d', 'm/d/Y', 'm-d-Y'];
+    //     $fmts = [
+    //         'd-m-Y',
+    //         'd/m/Y',
+    //         'd.m.Y', // ปี 4 หลัก
+    //         'Y/m/d',
+    //         'Y.m.d',
+    //         'm/d/Y',
+    //         'm-d-Y',
+    //         'd-m-y',
+    //         'd/m/y',
+    //         'd.m.y'  // ปี 2 หลัก (เช่น 25 → 2025)
+    //     ];
+
+    //     foreach ($fmts as $f) {
+    //         try {
+    //             $dt = Carbon::createFromFormat($f, $s);
+    //             // if ($dt !== false) return $dt->format('Y-m-d');
+    //             if ($dt !== false) {
+    //                 // ถ้าเป็น format ที่มีปี 2 หลัก
+    //                 if (str_contains($f, 'y') && $dt->year < 100) {
+    //                     $dt->year = 2000 + $dt->year; // บังคับเป็น ค.ศ. 20xx
+    //                 }
+    //                 return $dt->format('Y-m-d');
+    //             }
+    //         } catch (\Throwable $e) {
+    //         }
+    //     }
+    //     try {
+    //         return Carbon::parse($s)->format('Y-m-d');
+    //     } catch (\Throwable $e) {
+    //         return null;
+    //     }
+    // }
+
     protected function toYmdOrNull(?string $s): ?string
     {
         if (!$s) return null;
         $s = trim($s);
         if ($s === '') return null;
 
+        // already Y-m-d
         if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $s)) return $s;
 
-        $fmts = ['d-m-Y', 'd/m/Y', 'd.m.Y', 'Y/m/d', 'Y.m.d', 'm/d/Y', 'm-d-Y'];
+        // 1) pre-normalize: dd-mm-yy / dd/mm/yy / dd.mm.yy  => force 20yy
+        if (preg_match('/^(?<d>\d{1,2})[\/\.-](?<m>\d{1,2})[\/\.-](?<y>\d{2})$/', $s, $m)) {
+            $yy = (int)$m['y'];
+            $yyyy = 2000 + $yy; // บังคับเป็น ค.ศ. 20xx เสมอ
+            $d = str_pad($m['d'], 2, '0', STR_PAD_LEFT);
+            $mo = str_pad($m['m'], 2, '0', STR_PAD_LEFT);
+            return sprintf('%04d-%02d-%02d', $yyyy, (int)$mo, (int)$d);
+        }
+
+        // 2) try known formats
+        $fmts = [
+            'd-m-Y',
+            'd/m/Y',
+            'd.m.Y',
+            'Y/m/d',
+            'Y.m.d',
+            'm/d/Y',
+            'm-d-Y',
+            'd-m-y',
+            'd/m/y',
+            'd.m.y',   // ปี 2 หลัก
+        ];
+
         foreach ($fmts as $f) {
             try {
-                $dt = Carbon::createFromFormat($f, $s);
-                if ($dt !== false) return $dt->format('Y-m-d');
+                $dt = \Carbon\Carbon::createFromFormat($f, $s);
+                if ($dt !== false) {
+                    // ถ้าเป็นฟอร์แมตปี 2 หลัก บังคับเพิ่ม 2000
+                    if (str_contains($f, 'y') && $dt->year < 100) {
+                        $dt = $dt->setYear(2000 + $dt->year); // << สำคัญ: ใช้ setYear()
+                    }
+                    return $dt->format('Y-m-d');
+                }
             } catch (\Throwable $e) {
+                // ignore and try next
             }
         }
+
+        // 3) fallback parse (อาจเดาไม่ตรง จึงไม่บังคับ 2 หลักที่นี่)
         try {
-            return Carbon::parse($s)->format('Y-m-d');
+            return \Carbon\Carbon::parse($s)->format('Y-m-d');
         } catch (\Throwable $e) {
             return null;
         }

@@ -103,60 +103,83 @@ def main():
     # supplier_output_json = "supplier_data.json"
     # save_supplier_json(supplier_data, supplier_output_json)
 
-    # inv_filenames = [
-    #     {
-    #         "input_filename":"inv/2023.csv", 
-    #         "output_filename":"inv_2023.json"
-    #      },
-    #      {
-    #         "input_filename":"inv/2024.csv", 
-    #         "output_filename":"inv_2024.json"
-    #      },
-    #      {
-    #         "input_filename":"inv/2025.csv", 
-    #         "output_filename":"inv_2025.json"
-    #      },
-    # ]
+    inv_filenames = [
+        {
+            "input_filename":"inv/Invoice_052025_new.csv", 
+            "output_filename":"invoice_052025_new.json"
+         },
+        {
+            "input_filename":"inv/Invoice_062025_new.csv", 
+            "output_filename":"invoice_062025_new.json"
+         },
+        #  {
+        #     "input_filename":"inv/invoice_042025.csv", 
+        #     "output_filename":"invoice_042025.json"
+        #  },
+        #  {
+        #     "input_filename":"inv/invoice_052025.csv", 
+        #     "output_filename":"invoice_052025.json"
+        #  },
+        #  {
+        #     "input_filename":"inv/invoice_062025.csv", 
+        #     "output_filename":"invoice_062025.json"
+        #  },
+        #  {
+        #     "input_filename":"inv/invoice_072025.csv", 
+        #     "output_filename":"invoice_072025.json"
+        #  },
+        #  {
+        #     "input_filename":"inv/invoice_082025.csv", 
+        #     "output_filename":"invoice_082025.json"
+        #  },
+    ]
     
-    # for inv_filename in inv_filenames:
-    #     print(inv_filename["input_filename"])
-    #     inv_data = load_old_invoice_data(inv_filename["input_filename"])
-    #     print(len(inv_data))
-    #     print(inv_filename["output_filename"])
-    #     save_old_inv_json(inv_data, inv_filename["output_filename"])
+    if (len(inv_filenames) > 0) :
+        for inv_filename in inv_filenames:
+            print(inv_filename["input_filename"])
+            inv_data = load_old_invoice_data(inv_filename["input_filename"])
+            print(len(inv_data))
+            print(inv_filename["output_filename"])
+            save_old_inv_json(inv_data, inv_filename["output_filename"])
 
     po_filenames = [
         # {
-        #     "input_filename":"po/2023.xlsx", 
-        #     "output_filename":"po_2023.json"
-        #  }, //done
-        #  {
-        #     "input_filename":"po/2024.xlsx", 
-        #     "output_filename":"po_2024.json"
+        #     "input_filename":"po/PO_022025.csv", 
+        #     "output_filename":"po_022025.json"
         #  },
-         {
-            "input_filename":"po/10-2024.csv", 
-            "output_filename":"po_10_2024.json"
-         },
-         {
-            "input_filename":"po/11-2024.csv", 
-            "output_filename":"po_11_2024.json"
-         },
-         {
-            "input_filename":"po/12-2024.csv", 
-            "output_filename":"po_12_2024.json"
-         },
+        # {
+        #     "input_filename":"po/PO_032025.csv", 
+        #     "output_filename":"po_032025.json"
+        #  },
+        # {
+        #     "input_filename":"po/PO_042025.csv", 
+        #     "output_filename":"po_042025.json"
+        #  },
+        # {
+        #     "input_filename":"po/PO_052025.csv", 
+        #     "output_filename":"po_052025.json"
+        #  },
+        # {
+        #     "input_filename":"po/PO_062025.csv", 
+        #     "output_filename":"po_062025.json"
+        #  },
+        # {
+        #     "input_filename":"po/PO_072025.csv", 
+        #     "output_filename":"po_072025.json"
+        #  },
         #  {
-        #     "input_filename":"po/01-2025.csv", 
-        #     "output_filename":"po_2025.json"
+        #     "input_filename":"po/PO_082025.csv", 
+        #     "output_filename":"po_082025.json"
         #  },
     ]
 
-    for po_filename in po_filenames:
-        po_data = load_old_po_data(po_filename["input_filename"])
-        print(len(po_data))
-        print(po_filename["output_filename"])
-        save_old_po_json(po_data, po_filename["output_filename"])
+    if (len(po_filenames) > 0) :
+        for po_filename in po_filenames:
+            po_data = load_old_po_data(po_filename["input_filename"])
+            print(len(po_data))
+            print(po_filename["output_filename"])
+            save_old_po_json(po_data, po_filename["output_filename"])
+    
 
 if __name__ == "__main__":
     main()

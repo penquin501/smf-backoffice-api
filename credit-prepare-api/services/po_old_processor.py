@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import datetime
+import re
 
 def fix_buddhist_year(date_val):
     if isinstance(date_val, str):
@@ -23,6 +24,49 @@ def fix_buddhist_year(date_val):
             return date_val.replace(year=date_val.year - 543)
         return date_val
     return date_val
+
+def normalize_th_date(val):
+    if pd.isna(val):
+        return pd.NaT
+
+    s = str(val).strip()
+    if not s or s.lower() in ("nan", "nat", "none"):
+        return pd.NaT
+
+    # ให้ตัวคั่นเป็น '-' ทั้งหมด
+    s = re.sub(r"[./]", "-", s)
+
+    # กรณีเป็นรูป d-m-y หรือ y-m-d ที่ปลายเป็นปี
+    m = re.match(r"^\s*(\d{1,4})-(\d{1,2})-(\d{1,4})\s*$", s)
+    if m:
+        a, b, c = m.groups()
+
+        # ถ้าเป็นรูปแบบ Y-m-d ให้สลับเป็น d-m-Y เพื่อให้ dayfirst ทำงานตรงตามต้องการ
+        if len(a) == 4:  # YYYY-m-d
+            y, mth, d = int(a), int(b), int(c)
+        else:            # d-m-YYYY หรือ d-m-YY
+            d, mth, y = int(a), int(b), int(c)
+
+        # ปี 2 หลัก -> เดาสมเหตุสมผล (00-79 => 2000-2079, 80-99 => 1980-1999 หรือถ้าต้องการ พ.ศ. -> ปรับเอง)
+        if y < 100:
+            y = 2000 + y  # ปรับตามกติกาที่คุณต้องการ
+
+        # หากเป็นปีพุทธศักราชให้ลบ 543
+        if y >= 2400:
+            y -= 543
+
+        # สร้างสตริงใหม่เป็น d-m-Y แล้ว parse ด้วย dayfirst
+        s = f"{d:02d}-{mth:02d}-{y:04d}"
+
+    # แปลงเป็น datetime (พยายามแบบไทยก่อน dayfirst=True)
+    dt = pd.to_datetime(s, dayfirst=True, errors="coerce")
+
+    # เผื่อมีกรณีที่ยังหลุด ให้ลอง month-first เป็นทางเลือกสุดท้าย
+    if pd.isna(dt):
+        dt = pd.to_datetime(s, dayfirst=False, errors="coerce")
+
+    # กรณีสุดท้าย: ถ้ายัง NaT ก็คืน NaT ไป
+    return dt
 
 def clean_numeric(value):
     if isinstance(value, str):
@@ -110,11 +154,17 @@ def load_old_po_data(file_path):
             combined_df[col] = combined_df[col].astype(str).fillna("")
 
     # แปลง invoice_date เป็น YYYY-MM-DD
-    # if "invoice_date" in combined_df.columns:
-    #     combined_df["invoice_date"] = combined_df["invoice_date"].astype(str)
-    #     combined_df["invoice_date"] = combined_df["invoice_date"].apply(fix_buddhist_year)
-    #     combined_df["invoice_date"] = pd.to_datetime(combined_df["invoice_date"], errors="coerce")
-    #     combined_df["invoice_date"] = combined_df["invoice_date"].dt.strftime("%Y-%m-%d")
+    if "po_date" in combined_df.columns:
+        combined_df["po_date"] = combined_df["po_date"].astype(str)
+        combined_df["po_date"] = combined_df["po_date"].apply(normalize_th_date)
+        combined_df["po_date"] = pd.to_datetime(combined_df["po_date"], errors="coerce")
+        combined_df["po_date"] = combined_df["po_date"].dt.strftime("%Y-%m-%d")
+
+    if "po_shipment_date" in combined_df.columns:
+        combined_df["po_shipment_date"] = combined_df["po_shipment_date"].astype(str)
+        combined_df["po_shipment_date"] = combined_df["po_shipment_date"].apply(normalize_th_date)
+        combined_df["po_shipment_date"] = pd.to_datetime(combined_df["po_shipment_date"], errors="coerce")
+        combined_df["po_shipment_date"] = combined_df["po_shipment_date"].dt.strftime("%Y-%m-%d")
 
     # แปลง numeric fields เป็น float ผ่าน clean_numeric
     for col in ["amount_excl_vat", "vat_amount", "amount_incl_vat"]:
