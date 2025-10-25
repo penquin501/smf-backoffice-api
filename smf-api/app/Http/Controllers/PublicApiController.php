@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Models\BolBsRaw;
 use App\Models\BolIcRaw;
 use App\Models\GecInvoice;
 use App\Models\GecPurchaseOrder;
 use App\Models\DbdSupplier;
 use App\Models\GecInvoice2023;
+use App\Models\CompanyEntity;
+use App\Models\PersonCompany;
+use App\Models\CompanyBusinessSection;
 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
@@ -527,5 +531,205 @@ class PublicApiController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function dbd_company_supplier_store(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'company_name' => ['required', 'string', 'max:255'],
+                'registration_number' => ['required', 'string', 'max:32'],
+                'entity_type' => ['nullable', 'string', 'max:100'],
+                'incorporation_date_th' => ['nullable', 'date'], // YYYY-MM-DD
+                'status' => ['nullable', 'string', 'max:100'],
+                'registered_capital_baht' => ['nullable', 'numeric', 'min:0'],
+                'address' => ['nullable', 'string'],
+
+                'business_section_at_registration' => ['nullable', 'array'],
+                'business_section_at_registration.code' => ['nullable', 'string', 'max:50'],
+                'business_section_at_registration.description' => ['nullable', 'string'],
+
+                'objective_at_registration' => ['nullable', 'string'],
+
+                'business_section_latest' => ['nullable', 'array'],
+                'business_section_latest.code' => ['nullable', 'string', 'max:50'],
+                'business_section_latest.description' => ['nullable', 'string'],
+
+                'objective_latest' => ['nullable', 'string'],
+
+                'financial_filing_years_th' => ['nullable', 'array'],
+                'financial_filing_years_th.*' => ['string', 'max:10'],
+
+                'directors' => ['nullable', 'array'],
+                'directors.*' => ['string', 'max:255'],
+            ]);
+
+            $mapped = $this->mapBodyToCompanyEntity($data);
+
+            return DB::transaction(function () use ($mapped, $data) {
+                $company = CompanyEntity::updateOrCreate(
+                    ['registered_no' => $mapped['registered_no']],
+                    $mapped
+                );
+
+                $sections_upserted = 0;
+                foreach (['business_section_at_registration', 'business_section_latest'] as $k) {
+                    if (!empty($data[$k]['code'])) {
+                        CompanyBusinessSection::updateOrCreate(
+                            ['code' => trim($data[$k]['code'])],
+                            ['description' => isset($data[$k]['description']) ? trim($data[$k]['description']) : null]
+                        );
+                        $sections_upserted++;
+                    }
+                }
+
+                $directors_synced = 0;
+                if (!empty($data['directors']) && is_array($data['directors'])) {
+                    PersonCompany::where('registered_no', $company->registered_no)->delete();
+                    foreach ($data['directors'] as $fullName) {
+                        [$prefix, $first, $last] = $this->splitThaiName((string)$fullName);
+                        if ($first === '' && $last === '') continue;
+
+                        PersonCompany::create([
+                            'registered_no' => $company->registered_no,
+                            'citizen_id'    => null,   // ไม่มีใน payload
+                            'prefix'        => $prefix,
+                            'first_name'    => $first,
+                            'last_name'     => $last,
+                            'phone'         => null,
+                            'is_owner'      => null,
+                            'director_no'   => null,
+                            'boj5_doc_no'   => null,
+                        ]);
+                        $directors_synced++;
+                    }
+                }
+
+                return response()->json([
+                    'ok' => true,
+                    'mode' => $company->wasRecentlyCreated ? 'created' : 'updated',
+                    'company_id' => $company->id,
+                    'business_sections_upserted' => $sections_upserted,
+                    'directors_synced' => $directors_synced,
+                ], $company->wasRecentlyCreated ? 201 : 200);
+            });
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation failed',
+                'messages' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    private function mapBodyToCompanyEntity(array $src): array
+    {
+        $registeredCapital = isset($src['registered_capital_baht'])
+            ? number_format((float)$src['registered_capital_baht'], 2, '.', '')
+            : null;
+
+        return [
+            'registered_no'                      => trim($src['registration_number']),
+            'company_name_en'                    => null,                                    // ไม่มีใน payload
+            'company_name_th'                    => trim($src['company_name']),
+            'entity_type_code'                   => isset($src['entity_type']) ? trim($src['entity_type']) : null,
+            'registration_date'                  => $src['incorporation_date_th'] ?? null,   // YYYY-MM-DD
+            'status'                             => isset($src['status']) ? trim($src['status']) : null,
+            'num_director'                       => isset($src['directors']) ? count($src['directors']) : null,
+            'registered_capital_baht'            => $registeredCapital,
+            'total_num_shares'                   => null,          // ไม่มีใน payload
+            'value_per_share'                    => null,          // ไม่มีใน payload
+            'is_hq'                              => true,          // สมมติ head office ถ้า payload เป็นบริษัทหลัก
+            'branch'                             => 'สำนักงานใหญ่',
+            'registered_address'                 => $src['address'] ?? null,
+            'address'                            => $src['address'] ?? null,
+            'contact_person_id'                  => null,
+            'vat_registered_no'                  => null,
+            'is_vat'                             => null,
+            'is_ncb'                             => null,
+            'is_led'                             => null,
+            'is_secured'                         => null,
+            'business_section_registration_code' => $src['business_section_at_registration']['code'] ?? null,
+            'business_section_latest_code'       => $src['business_section_latest']['code'] ?? null,
+            'objective_at_registration'          => $src['objective_at_registration'] ?? null,
+            'objective_latest'                   => $src['objective_latest'] ?? null,
+        ];
+    }
+
+    private function splitThaiName(string $full): array
+    {
+        // รวม whitespace ทุกชนิด และลบ zero-width ออก
+        $s = preg_replace('/[\x{200B}\x{200C}\x{200D}\x{FEFF}]/u', '', $full);
+        $s = trim(preg_replace('/\p{Z}+/u', ' ', $s));
+        if ($s === '') return ['', '', ''];
+
+        // รายการคำนำหน้า (escape จุดด้วย \.)
+        $honorifics = [
+            'นาย',
+            'นาง',
+            'นางสาว',
+            'ดร\.',
+            'ดร',
+            'ผศ\.ดร\.',
+            'ผศ\.',
+            'รศ\.ดร\.',
+            'รศ\.',
+            'ศ\.ดร\.',
+            'ศ\.',
+            'คุณ',
+            'Mr\.',
+            'Ms\.',
+            'Mrs\.'
+        ];
+        $pattern = '/^(' . implode('|', $honorifics) . ')\s*/u'; // มี/ไม่มีช่องว่างตามหลังได้
+
+        $prefix = '';
+        if (preg_match($pattern, $s, $m)) {
+            $prefix = $m[1];
+            $s = trim(preg_replace($pattern, '', $s, 1));
+        }
+
+        $parts = preg_split('/\s+/u', $s, 2);
+        $first = trim($parts[0] ?? '');
+        $last  = trim($parts[1] ?? '');
+
+        return [$prefix, $first, $last];
+    }
+
+    public function directorsByRegisteredNo(string $registered_no, Request $request): JsonResponse
+    {
+        $query = PersonCompany::query()
+            ->where('registered_no', $registered_no)
+            ->orderBy('id', 'asc');
+
+        $page = $query->paginate(50);
+
+        // สร้าง full_name ให้ใช้งานง่าย
+        $data = $page->getCollection()->map(function ($p) {
+            return [
+                'registered_no' => $p->registered_no,
+                'citizen_id'    => $p->citizen_id,
+                'prefix'        => $p->prefix,
+                'first_name'    => $p->first_name,
+                'last_name'     => $p->last_name,
+                'phone'         => $p->phone,
+                'is_owner'      => $p->is_owner,
+                'director_no'   => $p->director_no,
+                'boj5_doc_no'   => $p->boj5_doc_no,
+            ];
+        });
+
+        // ใส่ข้อมูลกลับไปใน paginator
+        $page->setCollection($data);
+
+        return response()->json([
+            'total' => $page->total(),
+            'data' => $data,
+        ]);
     }
 }
