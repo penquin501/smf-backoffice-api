@@ -14,7 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $company_name_th
  * @property string|null $entity_type_code
  * @property string|null $registration_date
- * @property string|null $status
+ * @property string|null $company_status
+ * @property string|null $company_size
  * @property int|null $num_director
  * @property float|null $registered_capital_baht
  * @property int|null $total_num_shares
@@ -48,7 +49,8 @@ class CompanyEntity extends Model
         'company_name_th',
         'entity_type_code',
         'registration_date',
-        'status',
+        'company_status',
+        'company_size',
         'num_director',
         'registered_capital_baht',
         'total_num_shares',

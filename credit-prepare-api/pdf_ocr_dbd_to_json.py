@@ -6,6 +6,7 @@ pdf_ocr_dbd_to_json_v6.py
 - Extract text from PDF (prefer pdfminer; fallback Tesseract OCR)
 - Save full JSON: <name>.json
 - Save structured JSON (DBD table-aware + strong boundaries & tail-noise cleanup): <name>_structured.json
+- Merge downloads/<juristic_id>_company_title.json into structured (if present)
 
 pip install pdfminer.six pillow pytesseract pdf2image
 # macOS: brew install tesseract poppler
@@ -27,10 +28,15 @@ TESSERACT_CMD: Optional[str] = None  # set path on Windows if needed
 # ---------- PDF text layer ---------- #
 def extract_text_pdfminer(pdf_path: str) -> List[str]:
     try:
-        from pdfminer.high_level import extract_pages
-        from pdfminer.layout import LTTextContainer
+        from pdfminer_high_level import extract_pages  # type: ignore
+        from pdfminer.layout import LTTextContainer  # type: ignore
     except Exception:
-        return []
+        # บางเครื่องใช้ชื่อโมดูลเดิม
+        try:
+            from pdfminer.high_level import extract_pages  # type: ignore
+            from pdfminer.layout import LTTextContainer  # type: ignore
+        except Exception:
+            return []
     pages = []
     try:
         for layout in extract_pages(pdf_path):
@@ -168,6 +174,22 @@ def _convert_thai_date_to_iso(date_th: str) -> Optional[str]:
         return None
 
 
+# === directors as objects (helper) ===
+def _to_director_objs(names: List[str]) -> List[Dict[str, Any]]:
+    """แปลงรายชื่อเป็น [{"no": i, "name": name}] และทำความสะอาด tail '/' + กันซ้ำ"""
+    cleaned = []
+    seen = set()
+    for nm in names:
+        nm = (nm or "").strip().rstrip("/").strip()
+        if not nm:
+            continue
+        if nm in seen:
+            continue
+        seen.add(nm)
+        cleaned.append(nm)
+    return [{"no": i + 1, "name": nm} for i, nm in enumerate(cleaned)]
+
+
 def parse_structured_from_pages(pages: List[PageResult]) -> Dict[str, Any]:
     # full text for meta & fallbacks
     full = clean_text("\n".join([p.text for p in pages]))
@@ -242,25 +264,29 @@ def parse_structured_from_pages(pages: List[PageResult]) -> Dict[str, Any]:
                     txt = _norm(lines[j])
                     if BOUNDARY_PAT.search(txt):
                         break
-                    if re.match(r"^\d+\.\s*", txt):
-                        cand = re.sub(r"^\d+\.\s*", "", txt).strip(" /-•.")
+                    # เก็บเฉพาะรูปแบบ 1. ชื่อ / 2) ชื่อ
+                    if re.match(r"^\d+\s*[\.\)]\s*", txt):
+                        cand = re.sub(r"^\d+\s*[\.\)]\s*", "", txt).strip(" /-•.")
                         if not any(b in cand for b in ["ข้อมูล", "URL", "หน้า", "DBD", "ปีที่ส่งงบการเงิน"]):
                             local.append(cand)
                     j += 1
-                # doc-wide fallback
+
+                # doc-wide fallback (กันกรณี OCR แทรกเลขไว้ที่อื่น)
                 allnums = []
                 for x in lines:
                     t = _norm(x)
-                    if re.match(r"^\d+\.\s*", t):
-                        cand = re.sub(r"^\d+\.\s*", "", t).strip(" /-•.")
+                    if re.match(r"^\d+\s*[\.\)]\s*", t):
+                        cand = re.sub(r"^\d+\s*[\.\)]\s*", "", t).strip(" /-•.")
                         if not any(b in cand for b in ["ข้อมูล", "URL", "หน้า", "DBD", "ปีที่ส่งงบการเงิน"]):
                             allnums.append(cand)
+
                 names, seen = [], set()
                 for nm in allnums + local:
                     if nm and nm not in seen:
                         seen.add(nm)
                         names.append(nm)
-                results["directors"] = names
+
+                results["directors"] = _to_director_objs(names)
                 i = j
                 continue
 
@@ -292,7 +318,7 @@ def parse_structured_from_pages(pages: List[PageResult]) -> Dict[str, Any]:
             i += 1
             continue
         if pending:
-            if re.match(r"^\d+\.\s*", txt):
+            if re.match(r"^\d+\s*[\.\)]\s*", txt):
                 i += 1
                 continue
             tgt = None
@@ -320,7 +346,6 @@ def parse_structured_from_pages(pages: List[PageResult]) -> Dict[str, Any]:
             elif val:
                 results[field] = {"code": None, "description": val}
         elif field in ("objective_at_registration", "objective_latest"):
-            # If OCR merged code here (e.g., "62090 : ..."), keep only description
             m = re.match(r"(?P<code>[0-9]{3,5})\s*:\s*(?P<desc>.+)", val)
             if m:
                 val = m.group("desc")
@@ -340,11 +365,11 @@ def parse_structured_from_pages(pages: List[PageResult]) -> Dict[str, Any]:
         allnums = []
         for x in lines:
             t = _norm(x)
-            if re.match(r"^\d+\.\s*", t):
-                cand = re.sub(r"^\d+\.\s*", "", t).strip(" /-•.")
+            if re.match(r"^\d+\s*[\.\)]\s*", t):
+                cand = re.sub(r"^\d+\s*[\.\)]\s*", "", t).strip(" /-•.")
                 if not any(b in cand for b in ["ข้อมูล", "URL", "หน้า", "DBD", "ปีที่ส่งงบการเงิน"]):
                     allnums.append(cand)
-        results["directors"] = [d for d in allnums if d]
+        results["directors"] = _to_director_objs([d for d in allnums if d])
 
     out: Dict[str, Any] = {
         "company_name": company_name,
@@ -352,7 +377,7 @@ def parse_structured_from_pages(pages: List[PageResult]) -> Dict[str, Any]:
         "entity_type": entity_type,
         "incorporation_date_th": incorp_date_th,
         "status": status,
-        "registered_capital_baht": float(capital),
+        "registered_capital_baht": float(capital) if capital not in (None, "") else None,
         "address": results.get("address"),
         "business_section_at_registration": results.get("business_section_at_registration"),
         "objective_at_registration": results.get("objective_at_registration"),
@@ -370,7 +395,38 @@ def parse_structured_from_pages(pages: List[PageResult]) -> Dict[str, Any]:
         if iso:
             out["incorporation_date_th"] = iso
 
+    # ตัดคีย์ที่ค่าว่าง/None
     return {k: v for k, v in out.items() if v not in (None, "", [], {})}
+
+
+# ---------- NEW: merge company_title.json ---------- #
+def merge_company_title(structured: Dict[str, Any], base_dir: str, base_pdf_stem: str) -> Dict[str, Any]:
+    """
+    รวมข้อมูลจาก <juristic_id>_company_title.json (ถ้ามี) เข้า structured:
+    - ใส่คีย์ 'title_card' = เนื้อหาในไฟล์ company_title.json ทั้งก้อน
+    - ถ้ามี 'registered_date' ใน title และ structured ยังไม่มี → คัดลอกใส่ที่ root
+    - ถ้า structured['address'] ว่าง และ title มี 'head_office_address' → เติม address ให้
+    """
+    juristic_id = structured.get("registration_number") or base_pdf_stem.split("_")[0]
+    title_path = os.path.join(base_dir, f"{juristic_id}_company_title.json")
+    if not os.path.isfile(title_path):
+        return structured
+
+    try:
+        with open(title_path, "r", encoding="utf-8") as f:
+            title = json.load(f)
+    except Exception:
+        return structured
+
+    structured["title_card"] = title
+
+    if title.get("registered_date") and not structured.get("registered_date"):
+        structured["registered_date"] = title["registered_date"]
+
+    if title.get("head_office_address") and not structured.get("address"):
+        structured["address"] = title["head_office_address"]
+
+    return structured
 
 
 # ---------- main ---------- #
@@ -421,6 +477,10 @@ def main():
 
     if not args.text_only:
         structured = parse_structured_from_pages(pages)
+
+        # NEW: รวมข้อมูลจาก <juristic_id>_company_title.json ถ้ามี
+        structured = merge_company_title(structured, base_dir, base)
+
         with open(json_struct, "w", encoding="utf-8") as f:
             json.dump(structured, f, ensure_ascii=False, indent=2)
         print(f"Saved structured JSON: {json_struct}")
