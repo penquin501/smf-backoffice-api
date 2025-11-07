@@ -9,7 +9,7 @@ class CompanyBalanceSheet extends Model
     protected $table = 'company_balance_sheet';
 
     protected $fillable = [
-        'tax_id',
+        'registered_no',
         'fiscal_year',
         'accounts_receivable_net',
         'inventories',

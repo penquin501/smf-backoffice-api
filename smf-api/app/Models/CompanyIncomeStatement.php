@@ -12,7 +12,7 @@ class CompanyIncomeStatement extends Model
     protected $table = 'company_income_statement';
 
     protected $fillable = [
-        'tax_id',
+        'registered_no',
         'fiscal_year',
         'net_revenue',
         'total_revenue',
@@ -43,7 +43,7 @@ class CompanyIncomeStatement extends Model
     // ---------- Query Scopes ----------
     public function scopeTax($q, string $taxId)
     {
-        return $q->where('tax_id', $taxId);
+        return $q->where('registered_no', $taxId);
     }
 
     public function scopeYear($q, int $year)

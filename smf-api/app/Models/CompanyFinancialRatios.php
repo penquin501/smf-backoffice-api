@@ -12,7 +12,7 @@ class CompanyFinancialRatios extends Model
     protected $table = 'company_financial_ratios';
 
     protected $fillable = [
-        'tax_id',
+        'registered_no',
         'fiscal_year',
         'return_on_assets_percent',
         'return_on_equity_percent',
@@ -55,7 +55,7 @@ class CompanyFinancialRatios extends Model
     // ---------- Query Scopes ----------
     public function scopeTax($q, string $taxId)
     {
-        return $q->where('tax_id', $taxId);
+        return $q->where('registered_no', $taxId);
     }
 
     public function scopeYear($q, int $year)
