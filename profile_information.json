@@ -1,0 +1,41 @@
+{
+    "inquiryDetail": {
+        "systemId": 1,
+        "registrationId": "0105541008416",
+        "companyName": "",
+        "status": "1",
+        "dataSet": "",
+        "dataField": "201010100,201010200,201010300,201010400,201010500,201010600,201010700,201010800,201010900,201011000,201011100,201020100,201020200,201020300,201020400,201020500,201020600,201030300",
+        "periodFrom": "0",
+        "periodTo": "0",
+        "fsType": "2",
+        "language": "en",
+        "transactionTimestamp": "11/11/2025 09:51:32"
+    },
+    "inquiryStatus": {
+        "result": "Success",
+        "description": ""
+    },
+    "searchResults": [
+        {
+            "registrationNo": "0105541008416",
+            "companyName": "บริษัท ทรี โพรเกรส โพรดักส์ จำกัด",
+            "companyStatus": "ยังดำเนินกิจการอยู่",
+            "address": "145 ถนนจันทน์ 16 แขวงทุ่งวัดดอน เขตสาทร จังหวัดกรุงเทพมหานคร 10120",
+            "telephoneNo": "0-2287-4405",
+            "registrationDate": "09/02/2541",
+            "registeredCapital": "1000000",
+            "businessSize": "กิจการขนาดเล็ก",
+            "companyType": "บริษัทจำกัด",
+            "yearInBusiness": "28",
+            "registrationNoPrevious": "(3)146/2541",
+            "inactiveDate": "",
+            "importerExporter": "",
+            "subDistrict": "ทุ่งวัดดอน",
+            "district": "สาทร",
+            "province": "กรุงเทพมหานคร",
+            "region": "กรุงเทพและปริมณฑล",
+            "officialSignatory": "กรรมการคนใดคนหนึ่งลงลายมือชื่อ และประทับตราสำคัญของบริษัท"
+        }
+    ]
+}

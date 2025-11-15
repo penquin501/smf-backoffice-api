@@ -1,0 +1,64 @@
+{
+    "inquiryDetail": {
+        "systemId": 1,
+        "registrationId": "0105541008416",
+        "companyName": "",
+        "status": "1",
+        "dataSet": "",
+        "dataField": "202030101,202030102,202030103,202030104,202030105,202030106,202030107,202030108,202030109,202030110,202030201,202030202,202030203,202030204,202030205,202030206,202030207,202030301,202030302,202030303,202030304,202030305,202040100,202040200,202040300,202040400,202040500,202040600,202040700,202040800,202040900,202041000",
+        "periodFrom": "0",
+        "periodTo": "0",
+        "fsType": "2",
+        "language": "en",
+        "transactionTimestamp": "11/11/2025 09:53:38"
+    },
+    "inquiryStatus": {
+        "result": "Success",
+        "description": ""
+    },
+    "searchResults": [
+        {
+            "registrationNo": "0105541008416",
+            "companyName": "บริษัท ทรี โพรเกรส โพรดักส์ จำกัด",
+            "financial": [
+                {
+                    "fiscalYear": "2567",
+                    "financialDate": "31/12/2567",
+                    "fsType": "งบบริษัท",
+                    "totalAssets": "34333653.93",
+                    "shortTermLoansInLiabilities": "",
+                    "longTermLoansInLiabilities": "",
+                    "retainedEarning": "29361938.37",
+                    "totalRevenue": "34681792.23",
+                    "grossProfit": "10637319.11",
+                    "incomeBeforeDepreciation": "2827068.35",
+                    "incomeBeforeInterestAndIncomeTaxes": "2827068.35",
+                    "netIncome": "2247657.37",
+                    "accountReceivable": "3851636.82",
+                    "accountNotesReceivableNet": "3851636.82",
+                    "inventories": "1810413.21",
+                    "shortTermLoansAssets": "",
+                    "totalCurrentAssets": "23999230.41",
+                    "longTermLoansAssets": "10000000",
+                    "propertyPlantEquipmentNet": "334423.52",
+                    "totalNonCurrentAssets": "10334423.52",
+                    "cashAndDepositsAtFinancialInstitutions": "18330909.57",
+                    "accountsPayable": "3672304.58",
+                    "totalCurrentLiabilities": "3971715.56",
+                    "totalNonCurrentLiabilities": "",
+                    "totalLiabilities": "3971715.56",
+                    "authorizedCommonStocks": "1000000",
+                    "issuedPaidUpCommonStocks": "1000000",
+                    "totalShareholdersEquity": "30361938.37",
+                    "totalLiabilitiesShareholdersEquity": "34333653.93",
+                    "netSales": "34621474.59",
+                    "costOfSalesServices": "23984155.48",
+                    "operatingExpenses": "7870568.4",
+                    "earningsLossPerShare": "",
+                    "shortTermLoan": "",
+                    "interestExpenses": ""
+                }
+            ]
+        }
+    ]
+}

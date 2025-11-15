@@ -1,0 +1,51 @@
+{
+    "inquiryDetail": {
+        "systemId": 1,
+        "registrationId": "0105541008416",
+        "companyName": "",
+        "status": "1",
+        "dataSet": "",
+        "dataField": "202050101,202050102,202050201,202050202,202050203,202050204,202050205,202050206,202050301,202050302,202050303,202050304,202050401,202050402,202050403,202050501,202050502,202050504,202050503",
+        "periodFrom": "0",
+        "periodTo": "0",
+        "fsType": "2",
+        "language": "en",
+        "transactionTimestamp": "11/11/2025 09:54:01"
+    },
+    "inquiryStatus": {
+        "result": "Success",
+        "description": ""
+    },
+    "searchResults": [
+        {
+            "registrationNo": "0105541008416",
+            "companyName": "บริษัท ทรี โพรเกรส โพรดักส์ จำกัด",
+            "financial": [
+                {
+                    "fiscalYear": "2567",
+                    "financialDate": "31/12/2567",
+                    "fsType": "งบบริษัท",
+                    "currentRatio": "6.04",
+                    "quickRatio": "5.59",
+                    "accountsReceivableTurnover": "8.99",
+                    "accountsPayableTurnover": "6.53",
+                    "averagePaymentPeriod": "56",
+                    "inventoryTurnover": "13.25",
+                    "collectionPeriod": "41",
+                    "daySalesInventory": "28",
+                    "grossProfitMarginPercent": "30.72",
+                    "netProfitMarginPercent": "6.49",
+                    "roa": "6.55",
+                    "roe": "7.4",
+                    "debtRatio": ".12",
+                    "debtEquityRatio": ".13",
+                    "interestCoverage": "",
+                    "netSalesGrowthPercent": "9.17",
+                    "totalRevenueGrowthPercent": "9.36",
+                    "netProfitGrowthPercent": "31.97",
+                    "totalAssetGrowthPercent": "2.94"
+                }
+            ]
+        }
+    ]
+}

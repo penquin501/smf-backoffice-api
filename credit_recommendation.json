@@ -1,0 +1,27 @@
+{
+    "inquiryDetail": {
+        "systemId": 1,
+        "registrationId": "0105541008416",
+        "companyName": "",
+        "status": "1",
+        "dataSet": "",
+        "dataField": "201080100,201080200",
+        "periodFrom": "0",
+        "periodTo": "0",
+        "fsType": "2",
+        "language": "en",
+        "transactionTimestamp": "11/11/2025 09:53:15"
+    },
+    "inquiryStatus": {
+        "result": "Success",
+        "description": ""
+    },
+    "searchResults": [
+        {
+            "registrationNo": "0105541008416",
+            "companyName": "บริษัท ทรี โพรเกรส โพรดักส์ จำกัด",
+            "companyCredit": "216,761.20 - 289,014.94",
+            "creditTerm": "45 - 60"
+        }
+    ]
+}

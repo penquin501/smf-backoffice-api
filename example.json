@@ -1,0 +1,185 @@
+{
+  "inquiryDetail": {
+    "systemId": 1,
+    "registrationId": "0105541008416",
+    "companyName": "",
+    "status": "1",
+    "dataSet": "",
+    "dataField": "201010400,201040101,201060100,201080100,201080200,202030101,202050101",
+    "periodFrom": "0",
+    "periodTo": "0",
+    "fsType": "2",
+    "language": "en",
+    "transactionTimestamp": "10/11/2025 13:17:28"
+  },
+  "inquiryStatus": {
+    "result": "Success",
+    "description": ""
+  },
+  "searchResults": [
+    {
+      "registrationNo": "0105541008416",
+      "companyName": "บริษัท ทรี โพรเกรส โพรดักส์ จำกัด",
+      "companyStatus": "ยังดำเนินกิจการอยู่",
+      "address": "145 ถนนจันทน์ 16 แขวงทุ่งวัดดอน เขตสาทร จังหวัดกรุงเทพมหานคร 10120",
+      "telephoneNo": "0-2287-4405",
+      "registrationDate": "09/02/2541",
+      "registeredCapital": "1000000",
+      "businessSize": "กิจการขนาดเล็ก",
+      "companyType": "บริษัทจำกัด",
+      "yearInBusiness": "28",
+      "registrationNoPrevious": "(3)146/2541",
+      "inactiveDate": "",
+      "importerExporter": "",
+      "subDistrict": "ทุ่งวัดดอน",
+      "district": "สาทร",
+      "province": "กรุงเทพมหานคร",
+      "region": "กรุงเทพและปริมณฑล",
+      "officialSignatory": "กรรมการคนใดคนหนึ่งลงลายมือชื่อ และประทับตราสำคัญของบริษัท",
+      "financial": [
+        {
+          "fiscalYear": "2567",
+          "financialDate": "31/12/2567",
+          "fsType": "งบบริษัท",
+          "totalAssets": "34333653.93",
+          "shortTermLoansInLiabilities": "",
+          "longTermLoansInLiabilities": "",
+          "retainedEarning": "29361938.37",
+          "totalRevenue": "34681792.23",
+          "grossProfit": "10637319.11",
+          "incomeBeforeDepreciation": "2827068.35",
+          "incomeBeforeInterestAndIncomeTaxes": "2827068.35",
+          "netIncome": "2247657.37",
+          "accountReceivable": "3851636.82",
+          "accountNotesReceivableNet": "3851636.82",
+          "inventories": "1810413.21",
+          "shortTermLoansAssets": "",
+          "totalCurrentAssets": "23999230.41",
+          "longTermLoansAssets": "10000000",
+          "propertyPlantEquipmentNet": "334423.52",
+          "totalNonCurrentAssets": "10334423.52",
+          "cashAndDepositsAtFinancialInstitutions": "18330909.57",
+          "accountsPayable": "3672304.58",
+          "totalCurrentLiabilities": "3971715.56",
+          "totalNonCurrentLiabilities": "",
+          "totalLiabilities": "3971715.56",
+          "authorizedCommonStocks": "1000000",
+          "issuedPaidUpCommonStocks": "1000000",
+          "totalShareholdersEquity": "30361938.37",
+          "totalLiabilitiesShareholdersEquity": "34333653.93",
+          "netSales": "34621474.59",
+          "costOfSalesServices": "23984155.48",
+          "operatingExpenses": "7870568.4",
+          "earningsLossPerShare": "",
+          "shortTermLoan": "",
+          "interestExpenses": "",
+          "currentRatio": "6.04",
+          "quickRatio": "5.59",
+          "accountsReceivableTurnover": "8.99",
+          "accountsPayableTurnover": "6.53",
+          "averagePaymentPeriod": "56",
+          "inventoryTurnover": "13.25",
+          "collectionPeriod": "41",
+          "daySalesInventory": "28",
+          "grossProfitMarginPercent": "30.72",
+          "netProfitMarginPercent": "6.49",
+          "roa": "6.55",
+          "roe": "7.4",
+          "debtRatio": ".12",
+          "debtEquityRatio": ".13",
+          "interestCoverage": "",
+          "netSalesGrowthPercent": "9.17",
+          "totalRevenueGrowthPercent": "9.36",
+          "netProfitGrowthPercent": "31.97",
+          "totalAssetGrowthPercent": "2.94"
+        }
+      ],
+      "tsicCode1": {
+        "code": "46495",
+        "description": "การขายส่งเครื่องดินเผาเครื่องแก้วและเครื่องครัว"
+      },
+      "tsicCode2": {},
+      "tsicCode3": {},
+      "naicsCode1": {
+        "code": "421220",
+        "description": "ผู้ค้าส่งเครื่องตกแต่งบ้าน"
+      },
+      "naicsCode2": {},
+      "naicsCode3": {},
+      "fsScore": "1460",
+      "fsClass": {
+        "code": "1",
+        "description": "ความเสี่ยงต่ำ"
+      },
+      "directors": [
+        {
+          "no": "1",
+          "name": "นายอิทธิพัฒน์ จงวัฒนาภิรมย์"
+        },
+        {
+          "no": "2",
+          "name": "นางศรีเพ็ญ จงวัฒนาภิรมย์"
+        },
+        {
+          "no": "3",
+          "name": "นางสาวศิริวรรณ จงวัฒนาภิรมย์"
+        }
+      ],
+      "shareholder": {
+        "meetingDate": "30/04/2568",
+        "shareholders": [
+          {
+            "no": "1",
+            "name": "นายประพันธ์ จงวัฒนาภิรมย์",
+            "nationality": "ไทย",
+            "percentShare": "20.0000",
+            "noOfShare": "2,000.00",
+            "bahtShare": "200,000.00"
+          },
+          {
+            "no": "2",
+            "name": "นายประสิทธิ์ จงวัฒนาภิรมย์",
+            "nationality": "ไทย",
+            "percentShare": "20.0000",
+            "noOfShare": "2,000.00",
+            "bahtShare": "200,000.00"
+          },
+          {
+            "no": "3",
+            "name": "นางสาวศิริวรรณ จงวัฒนาภิรมย์",
+            "nationality": "ไทย",
+            "percentShare": "20.0000",
+            "noOfShare": "2,000.00",
+            "bahtShare": "200,000.00"
+          },
+          {
+            "no": "4",
+            "name": "นางศรีเพ็ญ จงวัฒนาภิรมย์",
+            "nationality": "ไทย",
+            "percentShare": "15.0000",
+            "noOfShare": "1,500.00",
+            "bahtShare": "150,000.00"
+          },
+          {
+            "no": "5",
+            "name": "นายอิทธิพัฒน์ จงวัฒนาภิรมย์",
+            "nationality": "ไทย",
+            "percentShare": "15.0000",
+            "noOfShare": "1,500.00",
+            "bahtShare": "150,000.00"
+          },
+          {
+            "no": "6",
+            "name": "นางวลัยพร จงวัฒนาภิรมย์",
+            "nationality": "ไทย",
+            "percentShare": "10.0000",
+            "noOfShare": "1,000.00",
+            "bahtShare": "100,000.00"
+          }
+        ]
+      },
+      "companyCredit": "3,666,054.50 - 4,888,072.50",
+      "creditTerm": "45"
+    }
+  ]
+}

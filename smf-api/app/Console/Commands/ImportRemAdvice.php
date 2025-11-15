@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 use JsonMachine\Items;
 use Carbon\Carbon;
 
-class ImportRmReport extends Command
+class ImportRemAdvice extends Command
 {
     protected $signature = 'rm-report:import
         {path : Path to JSON file}
@@ -43,7 +43,6 @@ class ImportRmReport extends Command
         $this->line("Pointer: " . ($pointer === '' ? '(none)' : $pointer));
         $this->line("Dry-run: " . ($dryRun ? 'YES' : 'NO'));
 
-        // อ่าน schema เฉย ๆ (ไม่บังคับว่าต้องมีคอลัมน์ใด)
         try {
             $columns = Schema::connection($connName)->getColumnListing($table);
         } catch (\Throwable $e) {

@@ -1,0 +1,92 @@
+{
+    "inquiryDetail": {
+        "systemId": 1,
+        "registrationId": "0105541008416",
+        "companyName": "",
+        "status": "1",
+        "dataSet": "",
+        "dataField": "201060100,201070100",
+        "periodFrom": "0",
+        "periodTo": "0",
+        "fsType": "2",
+        "language": "en",
+        "transactionTimestamp": "11/11/2025 09:52:54"
+    },
+    "inquiryStatus": {
+        "result": "Success",
+        "description": ""
+    },
+    "searchResults": [
+        {
+            "registrationNo": "0105541008416",
+            "companyName": "บริษัท ทรี โพรเกรส โพรดักส์ จำกัด",
+            "directors": [
+                {
+                    "no": "1",
+                    "name": "นายอิทธิพัฒน์ จงวัฒนาภิรมย์"
+                },
+                {
+                    "no": "2",
+                    "name": "นางศรีเพ็ญ จงวัฒนาภิรมย์"
+                },
+                {
+                    "no": "3",
+                    "name": "นางสาวศิริวรรณ จงวัฒนาภิรมย์"
+                }
+            ],
+            "shareholder": {
+                "meetingDate": "30/04/2568",
+                "shareholders": [
+                    {
+                        "no": "1",
+                        "name": "นายประพันธ์ จงวัฒนาภิรมย์",
+                        "nationality": "ไทย",
+                        "percentShare": "20.0000",
+                        "noOfShare": "2,000.00",
+                        "bahtShare": "200,000.00"
+                    },
+                    {
+                        "no": "2",
+                        "name": "นายประสิทธิ์ จงวัฒนาภิรมย์",
+                        "nationality": "ไทย",
+                        "percentShare": "20.0000",
+                        "noOfShare": "2,000.00",
+                        "bahtShare": "200,000.00"
+                    },
+                    {
+                        "no": "3",
+                        "name": "นางสาวศิริวรรณ จงวัฒนาภิรมย์",
+                        "nationality": "ไทย",
+                        "percentShare": "20.0000",
+                        "noOfShare": "2,000.00",
+                        "bahtShare": "200,000.00"
+                    },
+                    {
+                        "no": "4",
+                        "name": "นางศรีเพ็ญ จงวัฒนาภิรมย์",
+                        "nationality": "ไทย",
+                        "percentShare": "15.0000",
+                        "noOfShare": "1,500.00",
+                        "bahtShare": "150,000.00"
+                    },
+                    {
+                        "no": "5",
+                        "name": "นายอิทธิพัฒน์ จงวัฒนาภิรมย์",
+                        "nationality": "ไทย",
+                        "percentShare": "15.0000",
+                        "noOfShare": "1,500.00",
+                        "bahtShare": "150,000.00"
+                    },
+                    {
+                        "no": "6",
+                        "name": "นางวลัยพร จงวัฒนาภิรมย์",
+                        "nationality": "ไทย",
+                        "percentShare": "10.0000",
+                        "noOfShare": "1,000.00",
+                        "bahtShare": "100,000.00"
+                    }
+                ]
+            }
+        }
+    ]
+}

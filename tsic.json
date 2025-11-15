@@ -1,0 +1,37 @@
+{
+    "inquiryDetail": {
+        "systemId": 1,
+        "registrationId": "0105541008416",
+        "companyName": "",
+        "status": "1",
+        "dataSet": "",
+        "dataField": "201040101,201040102,201040103,201040201,201040202,201040203",
+        "periodFrom": "0",
+        "periodTo": "0",
+        "fsType": "2",
+        "language": "en",
+        "transactionTimestamp": "11/11/2025 09:52:06"
+    },
+    "inquiryStatus": {
+        "result": "Success",
+        "description": ""
+    },
+    "searchResults": [
+        {
+            "registrationNo": "0105541008416",
+            "companyName": "บริษัท ทรี โพรเกรส โพรดักส์ จำกัด",
+            "tsicCode1": {
+                "code": "46495",
+                "description": "การขายส่งเครื่องดินเผาเครื่องแก้วและเครื่องครัว"
+            },
+            "tsicCode2": {},
+            "tsicCode3": {},
+            "naicsCode1": {
+                "code": "421220",
+                "description": "ผู้ค้าส่งเครื่องตกแต่งบ้าน"
+            },
+            "naicsCode2": {},
+            "naicsCode3": {}
+        }
+    ]
+}
